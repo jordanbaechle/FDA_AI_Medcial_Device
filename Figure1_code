@@ -1,0 +1,34 @@
+# Assuming you have a dataframe `data` with columns 'Year', 'Panel_Combined', and 'Count'
+# and that you have already transformed the data as needed in previous steps.
+
+library(ggplot2)
+
+# First, you need to reshape your data to a long format using tidyr or reshape2 package.
+# Here's how you would do it with tidyr:
+
+# Assuming your data is in a dataframe called 'data'
+library(tidyr)
+data_long <- gather(data, key = "Specialty", value = "Count", -Year)
+
+# Now, create the plot with ggplot2
+plot <- ggplot(data_long, aes(x = as.factor(Year), y = Count, fill = Specialty)) +
+  geom_bar(stat = "identity", position = "stack", color = "black") +  # Add black borders around the bars
+  scale_fill_manual(values = c("#E64B35FF", "#4DBBD5FF", "#00A087FF", "#3C5488FF", 
+                               "#F39B7FFF", "#8491B4FF", "#91D1C2FF", "#DC0000FF", 
+                               "#7E6148FF", "#B09C85FF")) + # Use the specified colors
+  theme_minimal() +
+  theme(legend.title = element_text(text = "Specialty"),
+        axis.text.x = element_text(angle = 45, hjust = 1), # Rotate x-axis labels to 45 degrees
+        panel.background = element_rect(fill = "white"), # White background
+        panel.grid.major = element_line(color = "grey80", linetype = "dashed"), # Grid lines
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_text(size = 12),
+        legend.position = "right") +
+  labs(x = "Year", y = "FDA-approved AI/ML-enabled Medical Devices") +
+  scale_x_discrete(labels = function(x) ifelse(x == "2023", "2023*", x)) # Change "2023" to "2023*"
+
+# Print the plot
+print(plot)
+
+# Save the plot
+ggsave("stacked_barplot_npg_borders.png", plot, width = 8, height = 6, dpi = 300)
